@@ -14,9 +14,33 @@ void* threadfunc(void* thread_param)
     // TODO: wait, obtain mutex, wait, release mutex as described by thread_data structure
     // hint: use a cast like the one below to obtain thread arguments from your parameter
     //struct thread_data* thread_func_args = (struct thread_data *) thread_param;
-    return thread_param;
-}
+    
+    struct thread_data* thread_func_args = (struct thread_data*)thread_param;
 
+    // Sleep to simulate waiting to obtain the mutex
+    usleep(thread_func_args->wait_to_obtain_ms * 1000);
+
+    // Try to obtain the mutex
+    if (pthread_mutex_lock(thread_func_args->mutex) != 0) {
+        ERROR_LOG("Failed to obtain the mutex.");
+        thread_func_args->thread_complete_success = false;
+        pthread_exit(thread_param);
+    }
+
+    // Sleep to simulate holding the mutex
+    usleep(thread_func_args->wait_to_release_ms * 1000);
+
+    // Release the mutex
+    if (pthread_mutex_unlock(thread_func_args->mutex) != 0) {
+        ERROR_LOG("Failed to release the mutex.");
+        thread_func_args->thread_complete_success = false;
+    } else {
+        thread_func_args->thread_complete_success = true;
+    }
+
+    pthread_exit(thread_param);
+}
+   
 
 bool start_thread_obtaining_mutex(pthread_t *thread, pthread_mutex_t *mutex,int wait_to_obtain_ms, int wait_to_release_ms)
 {
@@ -28,6 +52,21 @@ bool start_thread_obtaining_mutex(pthread_t *thread, pthread_mutex_t *mutex,int 
      *
      * See implementation details in threading.h file comment block
      */
-    return false;
-}
+    struct thread_data *data = (struct thread_data*)malloc(sizeof(struct thread_data));
+    if (data == NULL) {
+        ERROR_LOG("Failed to allocate memory for thread_data.");
+        return false; // Memory allocation failed
+    }
 
+    data->wait_to_obtain_ms = wait_to_obtain_ms;
+    data->wait_to_release_ms = wait_to_release_ms;
+    data->mutex = mutex;
+
+    if (pthread_create(thread, NULL, threadfunc, data) != 0) {
+        ERROR_LOG("Failed to create the thread.");
+        free(data);
+        return false; // Thread creation failed
+    }
+
+    return true; // Thread started successfully
+}
