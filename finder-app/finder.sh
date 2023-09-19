@@ -3,7 +3,7 @@
 # Course: Advanced Embedded Linux Specialisation
 #---------------------------------------------
 
-#!/bin/bash
+#!/bin/sh
 
 # Check if the number of arguments is not equal to 2
 if [ "$#" -ne 2 ]; then
