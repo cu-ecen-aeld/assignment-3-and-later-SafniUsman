@@ -1,9 +1,9 @@
+#!/bin/bash
 #---------------------------------------------
 # Author: Safni Usman T
 # Course: Advanced Embedded Linux Specialisation
 #---------------------------------------------
 
-#!/bin/bash
 
 # Check if the number of arguments is not equal to 2
 if [ "$#" -ne 2 ]; then
