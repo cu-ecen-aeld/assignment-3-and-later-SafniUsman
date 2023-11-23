@@ -1,6 +1,9 @@
 #!/bin/bash
-# Script outline to install and build kernel.
-# Author: Siddhant Jajoo.
+
+#---------------------------------------------
+# Author: Safni Usman T
+# Course: Advanced Embedded Linux Specialisation
+#---------------------------------------------
 
 set -e
 set -u
